@@ -1,0 +1,5 @@
+16:59:48
+
+Starting Hybrid Experiment [device: cpu]
+
+Namespace(action_noise=0.3, action_repeat=1, action_std=1, cem_alpha=0.0, device=device(type='cpu'), discount_factor=1.0, ensemble_size=1, env_name='piche', epsilon=1e-08, grad_clip_norm=1000, hidden_size=350, lambda_=1, logdir='piche', lr=0.001, max_episode_steps=50, model_batch_size=50, model_buffer_size=1000000, noise_mu=0, noise_sigma=1, num_candidates=500, num_collect_episodes=1, num_episodes=1500, num_modes=3, num_seed_episodes=10, num_test_episodes=1, num_train_epochs=10, num_warm_up_episodes=-1, optimisation_iters=5, plan_horizon=20, planner='cem', save_every=1, seed=1, test_every=5, top_candidates=50, train_every=1, warm_start=True)
