@@ -37,43 +37,59 @@ from envs.piche_env import *
 from envs.planar_env import *
 from measures import *
 
+def save_reward(rewards,logdir, savedir):
+    np.save(logdir + "/rewards.npy",np.array(rewards))
+    subprocess.call(['rsync','--archive','--update','--compress','--progress',str(logdir) +"/",str(savedir)])
+    print("Rsynced files from: " + str(logdir) + "/ " + " to" + str(savedir))
+    now = datetime.now()
+    current_time = str(now.strftime("%H:%M:%S"))
+    subprocess.call(['echo','saved at time: ' + str(current_time)])
+    print("Rewards saved")
 
 def boolcheck(x):
     return str(x).lower() in ["true", "1", "yes"]
 
-def test_mpc(env, mpc_agent, logger):
+def test_mpc(env, mpc_agent, logger,num_epochs,logdir, savedir,plot_statespace = False):
     mpc_agent.set_action_noise(None)
-    states = []
-    state = env.reset()
-    total_reward = 0
-    done = False
-    while not done:
-        action = mpc_agent(state)
-        state, reward, done, _ = env.step(action)
-        states.append(state)
-        total_reward += reward
-    logger.log(f"Reward: {total_reward}")
-    states = np.stack(states)
-    increment = 1/states.shape[0]
-    alpha = 0.0
-    for i in range(states.shape[0]):
-        plt.scatter(states[i, 0], states[i, 1], color="b", alpha=min(1, alpha))
-        alpha += increment
-    try: 
-        env._env.draw_env()
-        plt.xlim(0, 1)
-        plt.ylim(0, 1)
-        ax = plt.gca()
-        plt.show()
-    except:
-        pass
+    reward_list = []
+    for n in range(num_epochs):
+        states = []
+        state = env.reset()
+        total_reward = 0
+        done = False
+        while not done:
+            action = mpc_agent(state)
+            state, reward, done, _ = env.step(action)
+            states.append(state)
+            total_reward += reward
+        logger.log(f"Reward: {total_reward}")
+        reward_list.append(total_reward)
+        #save each epoch
+        save_reward(reward_list, logdir,savedir)
+        if plot_statespace == True:
+            states = np.stack(states)
+            increment = 1/states.shape[0]
+            alpha = 0.0
+            for i in range(states.shape[0]):
+                plt.scatter(states[i, 0], states[i, 1], color="b", alpha=min(1, alpha))
+                alpha += increment
+            try: 
+                env._env.draw_env()
+                plt.xlim(0, 1)
+                plt.ylim(0, 1)
+                ax = plt.gca()
+                plt.show()
+            except:
+                pass
+
+                
 
 
 def main(args):
     seed_all(args.seed)
 
     logger = Logger(args.logdir, args.seed)
-    logger.log(f"\nStarting Hybrid Experiment [device: {args.device}]\n")
+    logger.log(f"\nStarting Planner Experiment [device: {args.device}]\n")
     logger.log(args)
 
     env = Env(
@@ -109,7 +125,7 @@ def main(args):
     else:
         raise ValueError("Planner argument not recognised")
 
-    test_mpc(env, mpc_agent, logger)
+    test_mpc(env, mpc_agent, logger,args.num_episodes,args.logdir, args.savedir)
 
 
 if __name__ == '__main__':
@@ -133,7 +149,6 @@ if __name__ == '__main__':
     parser.add_argument("--env_name", type=str, default="piche")
     parser.add_argument("--max_episode_steps", type=int, default=50)
     parser.add_argument("--action_repeat", type=int, default=1)
-    args = parser.parse_args()
     #Model
     parser.add_argument("--hidden_size", type=int, default=350)
     parser.add_argument("--ensemble_size", type=int, default=1)
@@ -164,4 +179,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
     args.device = DEVICE
     print("Args parsed")
+    #create folders
+    if args.savedir != "":
+        subprocess.call(["mkdir","-p",str(args.savedir)])
+    if args.logdir != "":
+        subprocess.call(["mkdir","-p",str(args.logdir)])
+    print("folders created")
     main(args)
