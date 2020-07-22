@@ -87,15 +87,15 @@ class Env(object):
         elif env_name == "piche":
             return PicheEnv(self.device)
         elif env_name == "pendulum":
-            return PendulumEnv()
+            return PendulumEnv(device=self.device)
         elif env_name == "double_pendulum":
-            return SparseDoublePendulum()
+            return SparseDoublePendulum(device=self.device)
         elif env_name == "lunar_lander":
-            return LunarLanderContinuous()
+            return LunarLanderContinuous(device=self.device)
         elif env_name == "lunar_lander_discrete":
-            return LunarLander()
+            return LunarLander(device=self.device)
         elif env_name == "mountain_car":
-            return MountainCar()
+            return MountainCar(device=self.device)
         else:
             try: 
                 return gym.make(env_name)
