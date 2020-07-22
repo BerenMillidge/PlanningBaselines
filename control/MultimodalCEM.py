@@ -64,15 +64,14 @@ class MultiModalCEMPlanner(Agent):
       # actions = actions.repeat(self.ensemble_size, 1, 1, 1).permute(1, 0, 2, 3)
 
       for t in range(self.plan_horizon):
-          new_state = self.env.dynamics_functions(states[t], actions[t])
-          states[t + 1] = new_state
-          
-          _new_states = states[t + 1].view(-1, state_size)
-          _states = states[t].view(-1, self.action_size)
-          rewards = self.reward_measure(_new_states, _states)
-          #print(rewards.device)
-          #print(returns.device)
-          returns += rewards
+            new_state,rewards, dones = self.env.dynamics_functions(states[t], actions[t])
+            states[t + 1] = new_state
+            
+            _new_states = states[t + 1].view(-1, state_size)
+            _states = states[t].view(-1, self.num_actions)
+            if rewards is None:
+                rewards = self.reward_measure(_new_states, _states)
+                returns += rewards
       states = torch.stack(states[1:], dim=0)
       return states, returns
 
