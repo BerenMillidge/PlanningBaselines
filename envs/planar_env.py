@@ -94,7 +94,7 @@ class PlanarEnv(gym.Env):
             new_states[i, :] = new_state
         # TODO
         new_states = torch.from_numpy(new_states).float().to(self.device)
-        return new_states
+        return new_states, None, None
 
     def dynamics(self, state, actions):
         vel_x = actions[0]
