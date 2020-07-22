@@ -52,7 +52,9 @@ def boolcheck(x):
 def test_mpc(env, mpc_agent, logger,num_epochs,logdir, savedir,plot_statespace = False):
     mpc_agent.set_action_noise(None)
     reward_list = []
+    subprocess.call(['echo','Beginning test'])
     for n in range(num_epochs):
+        subprocess.call(['echo','Epoch : ' + str(n)])
         states = []
         state = env.reset()
         total_reward = 0
