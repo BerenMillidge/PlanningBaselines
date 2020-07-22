@@ -1,11 +1,12 @@
 import math
 import gym
 import numpy as np
+import torch
 
 class MountainCar(gym.Env):
     metadata = {"render.modes": ["human", "rgb_array"], "video.frames_per_second": 30}
 
-    def __init__(self, goal_velocity=0, no_penalty=True):
+    def __init__(self, goal_velocity=0, no_penalty=True,device="cpu"):
         self.min_action = -1.0
         self.max_action = 1.0
         self.min_position = -1.2
@@ -32,6 +33,7 @@ class MountainCar(gym.Env):
 
         self.seed()
         self.reset()
+        self.device = device
 
     def seed(self, seed=None):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -101,7 +103,7 @@ class MountainCar(gym.Env):
             _states = states[i, :]
             _actions = actions[i, :]
             self.set_state(_states)
-            new_state,r,done,info = self.step(_states, _actions)
+            new_state,r,done,info = self.step(_actions)
             new_states[i, :] = new_state
             rewards[i,:] = r
             dones[i,:] = done

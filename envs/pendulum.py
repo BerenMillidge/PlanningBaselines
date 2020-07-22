@@ -3,6 +3,7 @@ from gym import spaces
 from gym.utils import seeding
 import numpy as np
 from os import path
+import torch
 
 class PendulumEnv(gym.Env):
     metadata = {
@@ -10,7 +11,7 @@ class PendulumEnv(gym.Env):
         'video.frames_per_second' : 30
     }
 
-    def __init__(self, g=10.0):
+    def __init__(self, g=10.0,device="cpu"):
         self.max_speed=8
         self.max_torque=2.
         self.dt=.05
@@ -24,6 +25,7 @@ class PendulumEnv(gym.Env):
         self.observation_space = spaces.Box(low=-high, high=high, dtype=np.float32)
 
         self.seed()
+        self.device = device
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -83,7 +85,7 @@ class PendulumEnv(gym.Env):
             _states = states[i, :]
             _actions = actions[i, :]
             self.set_state(_states)
-            new_state,r,done,info = self.step(_states, _actions)
+            new_state,r,done,info = self.step(_actions)
             new_states[i, :] = new_state
             rewards[i,:] = r
             dones[i,:] = done

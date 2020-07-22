@@ -1,5 +1,6 @@
 import numpy as np
 from numpy import sin, cos, pi
+import torch
 
 from gym import core, spaces
 from gym.utils import seeding
@@ -30,7 +31,7 @@ class SparseDoublePendulum(core.Env):
     domain_fig = None
     actions_num = 3
 
-    def __init__(self):
+    def __init__(self,device="cpu"):
         self.viewer = None
         high = np.array([1.0, 1.0, 1.0, 1.0, self.MAX_VEL_1, self.MAX_VEL_2])
         low = -high
@@ -42,6 +43,7 @@ class SparseDoublePendulum(core.Env):
         self.max_reward = 1
         self.min_reward = 0
         self.seed()
+        self.device = device
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
@@ -108,7 +110,7 @@ class SparseDoublePendulum(core.Env):
             _states = states[i, :]
             _actions = actions[i, :]
             self.set_state(_states)
-            new_state,r,done,info = self.step(_states, _actions)
+            new_state,r,done,info = self.step(_actions)
             new_states[i, :] = new_state
             rewards[i,:] = r
             dones[i,:] = done

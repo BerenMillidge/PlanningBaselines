@@ -9,6 +9,7 @@ import gym
 from gym import spaces
 from gym.utils import seeding, EzPickle
 from copy import deepcopy
+import torch
 
 # Rocket trajectory optimization is a classic topic in Optimal Control.
 #
@@ -80,7 +81,7 @@ class LunarLander(gym.Env, EzPickle):
 
     continuous = False
 
-    def __init__(self):
+    def __init__(self,device="cpu"):
         EzPickle.__init__(self)
         self.seed()
         self.viewer = None
@@ -91,6 +92,7 @@ class LunarLander(gym.Env, EzPickle):
         self.particles = []
 
         self.prev_reward = None
+        self.device=device
 
         # useful range is -1 .. +1, but spikes can be higher
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(8,), dtype=np.float32)
@@ -407,7 +409,7 @@ class LunarLander(gym.Env, EzPickle):
             _states = states[i, :]
             _actions = actions[i, :]
             self.set_state(_states)
-            new_state,r,done,info = self.step(_states, _actions)
+            new_state,r,done,info = self.step(_actions)
             new_states[i, :] = new_state
             rewards[i,:] = r
             dones[i,:] = done
