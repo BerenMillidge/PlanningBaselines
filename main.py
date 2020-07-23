@@ -139,7 +139,7 @@ if __name__ == '__main__':
     #Experiment
     parser.add_argument("--logdir", type=str, default="piche")
     parser.add_argument("--seed", type=int, default=1)
-    parser.add_argument("--num_episodes", type=int, default=1500)
+    parser.add_argument("--num_episodes", type=int, default=10)
     parser.add_argument("--num_seed_episodes", type=int, default=10)
     parser.add_argument("--num_collect_episodes", type=int, default=1)
     parser.add_argument("--num_test_episodes", type=int, default=1)
@@ -149,8 +149,8 @@ if __name__ == '__main__':
     parser.add_argument("--num_warm_up_episodes", type=int, default=-1)
     #Environment
     parser.add_argument("--env_name", type=str, default="piche")
-    parser.add_argument("--max_episode_steps", type=int, default=50)
-    parser.add_argument("--action_repeat", type=int, default=1)
+    parser.add_argument("--max_episode_steps", type=int, default=200)
+    parser.add_argument("--action_repeat", type=int, default=3)
     #Model
     parser.add_argument("--hidden_size", type=int, default=350)
     parser.add_argument("--ensemble_size", type=int, default=1)
