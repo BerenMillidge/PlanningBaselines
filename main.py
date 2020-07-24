@@ -137,7 +137,8 @@ if __name__ == '__main__':
     print("Initialized")
     #parsing arguments
     #Experiment
-    parser.add_argument("--logdir", type=str, default="piche")
+    parser.add_argument("--logdir", type=str, default="log")
+    parser.add_argument("--savedir", type=str, default="save")
     parser.add_argument("--seed", type=int, default=1)
     parser.add_argument("--num_episodes", type=int, default=10)
     parser.add_argument("--num_seed_episodes", type=int, default=10)
